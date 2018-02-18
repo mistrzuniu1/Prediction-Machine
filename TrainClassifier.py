@@ -51,20 +51,21 @@ def SeperateFeatureAndTarget():
     Y_all = dataframe['FTR']
     return X_all,Y_all
 
+def main():
+    X_all,Y_all=SeperateFeatureAndTarget()
+    X_all=preprocessFeatures(X_all)
+    X_train,X_test,y_train,y_test = train_test_split(X_all,Y_all,
+                                                     test_size=45,
+                                                     random_state=2,
+                                                     stratify=Y_all)
 
-X_all,Y_all=SeperateFeatureAndTarget()
-X_all=preprocessFeatures(X_all)
-X_train,X_test,y_train,y_test = train_test_split(X_all,Y_all,
-                                                 test_size=45,
-                                                 random_state=2,
-                                                 stratify=Y_all)
+    clf_A = LogisticRegression(random_state = 42)
+    clf_B = SVC(random_state = 912, kernel='rbf')
+    clf_C = xgb.XGBClassifier(seed = 82)
 
-clf_A = LogisticRegression(random_state = 42)
-clf_B = SVC(random_state = 912, kernel='rbf')
-clf_C = xgb.XGBClassifier(seed = 82)
+    train_predict(clf_A, X_train, y_train, X_test, y_test)
+    train_predict(clf_B, X_train, y_train, X_test, y_test)
+    train_predict(clf_C, X_train, y_train, X_test, y_test)
 
-train_predict(clf_A, X_train, y_train, X_test, y_test)
-train_predict(clf_B, X_train, y_train, X_test, y_test)
-train_predict(clf_C, X_train, y_train, X_test, y_test)
-
-print ('')
+    print ('')
+    
