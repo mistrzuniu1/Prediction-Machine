@@ -5,11 +5,10 @@ My concept of this program is to train classifier which will be able to predict 
 In the file, "run.ipynb" I demonstrate how to run my project.
 
 In my project I used:
--scikit learn
--numpy
--pandas
--xgboost
+- scikit learn
+- numpy
+- pandas
+- xgboost
+
 
 I am using the dataset retrived from http://football-data.co.uk/data.php.
-
-
