@@ -8,6 +8,7 @@ from sklearn.cross_validation import train_test_split
 from IPython.display import display
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
+import numpy as np
 
 from time import time
 from sklearn.metrics import f1_score
@@ -43,23 +44,42 @@ def preprocessFeatures(X_all):
         X_all[col] = scale(X_all[col])
     return output
 
-def SeperateFeatureAndTarget():
+def SeperateFeatureTarget():
     dataframe = pd.read_csv("data/finalD1.csv", index_col=0)
-    upcoming = dataframe[-10:]
-    dataframe=dataframe[:len(dataframe)-10]
+    dataframe=dataframe[: len(dataframe) - 9]
     X_all = dataframe.drop(
         ['Date','FTR','HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'HomeTeamScored', 'AwayTeamScored', 'HomeTeamConceded',
          'AwayTeamConceded','HomeGoalDiff','AwayGoalDiff','HomeTeamPoints', 'AwayTeamPoints'], 1)
     Y_all = dataframe['FTR']
-    upcoming=upcoming.drop(
-        ['Date','FTR','HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'HomeTeamScored', 'AwayTeamScored', 'HomeTeamConceded',
-         'AwayTeamConceded','HomeGoalDiff','AwayGoalDiff','HomeTeamPoints', 'AwayTeamPoints'], 1)
-    return X_all,Y_all,upcoming
+    return X_all,Y_all
+
+def getTeamsForUpcoming():
+    dataframe = pd.read_csv("data/finalD1.csv", index_col=0)
+    teams = dataframe[['HomeTeam', 'AwayTeam']]
+    teams = teams[-9:]
+    return teams
+
+def CalculateProbabilityForUpcomingMatches(clf_A,teams,upcoming):
+    p = clf_A.predict_proba(upcoming)
+    teams = teams.reset_index()
+    teamsAndProbability = np.append(teams, p, axis=1)
+    teamsAndProbability = pd.DataFrame(data=teamsAndProbability)
+    teamsAndProbability = teamsAndProbability.drop([0], 1)
+    teamsAndProbability.columns = ['HomeTeam', 'AwayTeam', '1', 'X', '2']
+    teamsAndProbability.to_csv("data/UpcomingBundesligaProbablity.csv")
+
 
 def main():
 
-    X_all,Y_all,upcoming=SeperateFeatureAndTarget()
-    X_all=preprocessFeatures(X_all)
+    X_all,Y_all=SeperateFeatureTarget()
+
+    X_all = preprocessFeatures(X_all)
+    X_all=X_all[:len(X_all)-9]
+    Y_all=Y_all[:len(Y_all)-9]
+    upcoming=X_all[-9:]
+    teams=getTeamsForUpcoming()
+    #X_all, Y_all,upcoming_X=Helper.\
+    #    seperateUpcomingFromArchival(X_all,Y_all)
     X_train,X_test,y_train,y_test = train_test_split(X_all,Y_all,
                                                      test_size=20,
                                                      random_state=2,
@@ -73,12 +93,10 @@ def main():
     train_predict(clf_B, X_train, y_train, X_test, y_test)
     train_predict(clf_C, X_train, y_train, X_test, y_test)
 
-    p=clf_A.predict_proba(upcoming)
-    print(p)
+    CalculateProbabilityForUpcomingMatches(clf_A,teams,upcoming)
 
 
     print ('')
 
 if __name__ == "__main__":
     main()
-    

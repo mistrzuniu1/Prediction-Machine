@@ -48,3 +48,4 @@ def getFixtures(league):
     fixtures=pd.read_csv(source)
     properLeagueFixtures=fixtures.loc[(fixtures["Div"]==league)]
     return properLeagueFixtures
+
