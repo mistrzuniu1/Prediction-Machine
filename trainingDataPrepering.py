@@ -55,6 +55,7 @@ def main():
                                     actual_season_data],
                               ignore_index=True)
     full_training_data.to_csv("data/final"+"D1"+".csv")
+    print("Data Prepering done.")
     pass
 
 if __name__ == "__main__":
