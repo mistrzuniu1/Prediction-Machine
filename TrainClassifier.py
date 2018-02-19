@@ -44,7 +44,7 @@ def preprocessFeatures(X_all):
     return output
 
 def SeperateFeatureAndTarget():
-    dataframe = pd.read_csv("final.csv", index_col=0)
+    dataframe = pd.read_csv("data/final.csv", index_col=0)
     X_all = dataframe.drop(
         ['FTR', 'Date', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'HomeTeamScored', 'AwayTeamScored', 'HomeTeamConceded',
          'AwayTeamConceded'], 1)

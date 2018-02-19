@@ -30,7 +30,7 @@ def main():
                full_training_data[2],
                full_training_data[3],
                full_training_data[4]], ignore_index=True)
-    full_training_data.to_csv("final.csv")
+    full_training_data.to_csv("data/final.csv")
     pass
 
 if __name__ == "__main__":

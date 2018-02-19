@@ -35,6 +35,6 @@ def get_mw(playing_stat):
     return playing_stat
 
 def getStatistics(number_of_season):
-    source="D"+str(number_of_season)+".csv"
+    source="data/"+"D"+str(number_of_season)+".csv"
     traning_data=pd.read_csv(source)
     return traning_data
