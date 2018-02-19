@@ -3,18 +3,23 @@ import pandas as pd
 
 def get_cuml_points(matchres,round_number=0):
     matchres_points = matchres.applymap(Helper.convert_FTR_to_points)
-    matchres_points[1] = matchres_points[0]
-    matchres_points[0]=0
+
     if (round_number == 0):
         round_number = len(matchres_points.columns)
 
+    last_match_goals = matchres_points[1].copy()
+    matchres_points[1] = matchres_points[0]
+    matchres_points[0] = 0
+
     for i in range(2, round_number):
-        matchres_points[i] = matchres_points[i] + matchres_points[i - 1]
+        next_match_goals = matchres_points[i].copy()
+        matchres_points[i] = last_match_goals + matchres_points[i - 1]
+        last_match_goals = next_match_goals.copy()
     return matchres_points
 
 
 def get_form(playing_stat, matchweek,round_number=0):
-    form = get_team_form(playing_stat)
+    form = get_team_form(playing_stat,round_number)
     form_final = form.copy()
 
     #if round_number equals 0 then season is complete.
@@ -55,8 +60,8 @@ def add_points_diff(playing_statistics_1):
     playing_statistics_1['DiffPts'] = playing_statistics_1['HomeTeamPoints'] - playing_statistics_1['AwayTeamPoints']
     return playing_statistics_1
 
-def get_agg_points(playing_stat):
-    matchres = get_team_form(playing_stat)
+def get_agg_points(playing_stat,round_number=0):
+    matchres = get_team_form(playing_stat,round_number)
     cum_pts = get_cuml_points(matchres)
 
     HomeTeamPoints = []

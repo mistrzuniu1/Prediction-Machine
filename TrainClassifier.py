@@ -38,24 +38,30 @@ def preprocessFeatures(X_all):
             col_data=pd.get_dummies(col_data,prefix=col)
         output=output.join(col_data)
 
-    cols = [['HomeGoalDiff', 'AwayGoalDiff', 'DiffInGoals', 'DiffPts', 'HomeTeamPoints', 'AwayTeamPoints']]
+    cols = [['DiffInGoals', 'DiffPts']]
     for col in cols:
         X_all[col] = scale(X_all[col])
     return output
 
 def SeperateFeatureAndTarget():
-    dataframe = pd.read_csv("data/final.csv", index_col=0)
+    dataframe = pd.read_csv("data/finalD1.csv", index_col=0)
+    upcoming = dataframe[-10:]
+    dataframe=dataframe[:len(dataframe)-10]
     X_all = dataframe.drop(
-        ['FTR', 'Date', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'HomeTeamScored', 'AwayTeamScored', 'HomeTeamConceded',
-         'AwayTeamConceded'], 1)
+        ['Date','FTR','HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'HomeTeamScored', 'AwayTeamScored', 'HomeTeamConceded',
+         'AwayTeamConceded','HomeGoalDiff','AwayGoalDiff','HomeTeamPoints', 'AwayTeamPoints'], 1)
     Y_all = dataframe['FTR']
-    return X_all,Y_all
+    upcoming=upcoming.drop(
+        ['Date','FTR','HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'HomeTeamScored', 'AwayTeamScored', 'HomeTeamConceded',
+         'AwayTeamConceded','HomeGoalDiff','AwayGoalDiff','HomeTeamPoints', 'AwayTeamPoints'], 1)
+    return X_all,Y_all,upcoming
 
 def main():
-    X_all,Y_all=SeperateFeatureAndTarget()
+
+    X_all,Y_all,upcoming=SeperateFeatureAndTarget()
     X_all=preprocessFeatures(X_all)
     X_train,X_test,y_train,y_test = train_test_split(X_all,Y_all,
-                                                     test_size=45,
+                                                     test_size=20,
                                                      random_state=2,
                                                      stratify=Y_all)
 
@@ -67,5 +73,12 @@ def main():
     train_predict(clf_B, X_train, y_train, X_test, y_test)
     train_predict(clf_C, X_train, y_train, X_test, y_test)
 
+    p=clf_A.predict_proba(upcoming)
+    print(p)
+
+
     print ('')
+
+if __name__ == "__main__":
+    main()
     

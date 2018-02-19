@@ -1,9 +1,9 @@
 import pandas as pd
 import Helper
 
-def get_goals(playing_stat):
-    GoalsConceded = get_goals_conceded(playing_stat)
-    GoalsScored = get_goals_scored(playing_stat)
+def get_goals(playing_stat,round_number=0):
+    GoalsConceded = get_goals_conceded(playing_stat,round_number)
+    GoalsScored = get_goals_scored(playing_stat,round_number)
 
     j = 0
     HomeTeamScored = []
@@ -45,11 +45,14 @@ def get_goals_scored(traning_data,round_number=0):
     # Create a dataframe for goals scored where rows are teams and cols are matchweek.
     GoalsScored = pd.DataFrame(data=teams, index=[i for i in range(0, round_number)]).T
     # Aggregate to get uptil that point
+    last_match_goals=GoalsScored[1].copy()
     GoalsScored[1]=GoalsScored[0]
     GoalsScored[0]=0
 
-    for i in range(2, 21):
-        GoalsScored[i] = GoalsScored[i] + GoalsScored[i - 1]
+    for i in range(2, round_number):
+        next_match_goals=GoalsScored[i].copy()
+        GoalsScored[i] =last_match_goals + GoalsScored[i - 1]
+        last_match_goals = next_match_goals.copy()
     return GoalsScored
 
 
@@ -68,10 +71,13 @@ def get_goals_conceded(traning_data,round_number=0):
         round_number = (Helper.count_teams(traning_data) * 2) - 2
 
     GoalsConceded = pd.DataFrame(data=teams, index=[i for i in range(0, round_number)]).T
-    GoalsConceded[1]=GoalsConceded[0]
-    GoalsConceded[0]=0
+    last_match_goals = GoalsConceded[1].copy()
+    GoalsConceded[1] = GoalsConceded[0]
+    GoalsConceded[0] = 0
     for i in range(2, round_number):
-        GoalsConceded[i] = GoalsConceded[i] + GoalsConceded[i - 1]
+        next_match_goals = GoalsConceded[i].copy()
+        GoalsConceded[i] = last_match_goals + GoalsConceded[i - 1]
+        last_match_goals = next_match_goals.copy()
     return GoalsConceded
 
 def add_goal_diff(playing_statistics_1):

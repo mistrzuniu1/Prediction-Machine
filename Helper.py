@@ -34,7 +34,17 @@ def get_mw(playing_stat):
     playing_stat['MW'] = MatchWeek
     return playing_stat
 
-def getStatistics(number_of_season):
-    source="data/"+"D"+str(number_of_season)+".csv"
+def getStatistics(league,number_of_season=-1):
+    #if season is -1, it means actual
+    if(number_of_season==-1):
+        source = "data/"+league+"_current.csv"
+    else:
+        source="data/"+league+"_"+str(number_of_season)+".csv"
     traning_data=pd.read_csv(source)
     return traning_data
+
+def getFixtures(league):
+    source="data/fixtures.csv"
+    fixtures=pd.read_csv(source)
+    properLeagueFixtures=fixtures.loc[(fixtures["Div"]==league)]
+    return properLeagueFixtures
