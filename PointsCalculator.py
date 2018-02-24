@@ -46,6 +46,10 @@ class PointsCalculator:
                 teams[self.__data.iloc[i].HomeTeam].append('D')
 
         # if round_number equals 0 then season is complete.
+        for i in teams:
+            while(len(teams[i])<self.__round_number):
+                teams[i].append('D')
+
         return pd.DataFrame(data=teams, index=[i for i in range(0, self.__round_number)]).T
 
     def __add_points_diff(self):

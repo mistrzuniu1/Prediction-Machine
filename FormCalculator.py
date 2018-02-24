@@ -69,5 +69,10 @@ class FormCalculator:
                 teams[self.__data.iloc[i].AwayTeam].append('D')
                 teams[self.__data.iloc[i].HomeTeam].append('D')
 
+        for i in teams:
+            while(len(teams[i])<self.__round_number):
+                teams[i].append('D')
+
+
         # if round_number equals 0 then season is complete.
         return pd.DataFrame(data=teams, index=[i for i in range(0, self.__round_number)]).T

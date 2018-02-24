@@ -37,7 +37,7 @@ class LeagueResultPredictor:
         X_all,Y_all=featureTargetManager.getFeatureAndTarget()
 
         X_train, X_test, y_train, y_test = train_test_split(X_all, Y_all,
-                                                            test_size=200,
+                                                            test_size=100,
                                                             random_state=2,
                                                             stratify=Y_all)
 
@@ -75,14 +75,15 @@ class LeagueResultPredictor:
         return y_pred
 
     def getProbabilitiesForUpcomingMatches(self,clf):
-        teams=Helper.getTeamsForUpcoming()
+        teams=Helper.getTeamsForUpcoming(self.__league)
+        matchweek=Helper.getMatchweekForUpcoming(self.__league)
         p=self.__predictProbabilitiesForUpcoming(clf)
         teamsAndProbability = np.append(teams, p, axis=1)
         teamsAndProbability = pd.DataFrame(data=teamsAndProbability)
         teamsAndProbability = teamsAndProbability.drop([0], 1)
         teamsAndProbability.columns = ['HomeTeam', 'AwayTeam', '2', 'X', '1']
         teamsAndProbability=teamsAndProbability[['HomeTeam', 'AwayTeam', '1', 'X', '2']]
-        teamsAndProbability.to_csv("data/UpcomingBundesligaProbablity.csv")
+        teamsAndProbability.to_csv("data/"+self.__league+"/Predictions/week:"+str(matchweek)+".csv")
 
     def getLogisticRegressionClassifier(self):
         return self.__clf_A

@@ -13,7 +13,7 @@ class dataCollecter:
         full_training_data = pd.concat([archivial_data,
                                         actual_season_data],
                                        ignore_index=True)
-        full_training_data.to_csv("data/final" + "D1" + ".csv")
+        full_training_data.to_csv("data/"+self.__league+"/TrainingData/final" + self.__league + ".csv")
         print("Data Prepering done.")
 
     def __getArchivialData(self):
@@ -38,14 +38,15 @@ class dataCollecter:
                                   ignore_index=True)
         self.__dataCleaner=dataCleaner(self.__data)
         actual_season = self.__dataCleaner.format_data(self.__data)
+        actual_season.to_csv("data/"+self.__league+"/TrainingData/"+self.__league+"_current.csv")
         return actual_season
 
     def __getStatistics(self, seasonNumber=-1):
         # if season is -1, it means actual
         if (seasonNumber == -1):
-            source = "data/" + self.__league + "_current.csv"
+            source = "data/" + self.__league + "/SeasonsData/"+self.__league+"_current.csv"
         else:
-            source = "data/" + self.__league + "_" + str(seasonNumber) + ".csv"
+            source = "data/" + self.__league + "/SeasonsData/"+self.__league + "_" + str(seasonNumber) + ".csv"
         traning_data = pd.read_csv(source)
         return traning_data
 

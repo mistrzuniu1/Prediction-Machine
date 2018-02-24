@@ -18,10 +18,10 @@ class FeatureTargetManager:
         self.__X_all=None
         self.__y_all=None
         self.__data=None
-        self.__upcoming=None
-
+        self.__numberOfUpcoming = None
     def getFeatureToPredictUpcoming(self):
-        self.__X_all=pd.read_csv("data/finalD1.csv", index_col=0)
+        self.__X_all=pd.read_csv("data/"+self.__league+"/TrainingData/final"+self.__league+".csv", index_col=0)
+        self.__numberOfUpcoming= self.__X_all['FTR'].isnull().sum()
         if(self.__X_all is None):
             print("First of all save the data from actual season!")
             return None
@@ -30,17 +30,18 @@ class FeatureTargetManager:
              'HomeTeamConceded',
              'AwayTeamConceded', 'HomeGoalDiff', 'AwayGoalDiff', 'HomeTeamPoints', 'AwayTeamPoints'], 1)
         self.__preprocessFeatures()
-        self.__X_all =  self.__X_all[-9:]
+        self.__X_all =  self.__X_all[-(self.__numberOfUpcoming):]
         return self.__X_all
 
     def getFeatureAndTarget(self):
         self.__SeperateFeatureTarget()
         self.__preprocessFeatures()
-        return self.__X_all[: len(self.__X_all) - 9], self.__y_all[: len(self.__y_all) - 9]
+        return self.__X_all[: len(self.__X_all) - self.__numberOfUpcoming], self.__y_all[: len(self.__y_all) - self.__numberOfUpcoming]
 
     def __SeperateFeatureTarget(self):
-        self.__data= pd.read_csv("data/final"+self.__league+".csv", index_col=0)
-        self.__data = self.__data[: len(self.__data) - 9]
+        self.__data= pd.read_csv("data/"+self.__league+"/TrainingData/final"+self.__league+".csv", index_col=0)
+        self.__numberOfUpcoming = self.__data['FTR'].isnull().sum()
+        self.__data = self.__data[: (len(self.__data) - self.__numberOfUpcoming)]
         self.__X_all = self.__data.drop(
             ['Date', 'FTR', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'HomeTeamScored', 'AwayTeamScored',
              'HomeTeamConceded','AwayTeamConceded', 'HomeGoalDiff', 'AwayGoalDiff', 'HomeTeamPoints', 'AwayTeamPoints'], 1)

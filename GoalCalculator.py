@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 
 class GoalCalculator:
 
@@ -53,6 +54,9 @@ class GoalCalculator:
             AwayTeamScored = self.__data.iloc[i]['FTAG']
             teams[self.__data.iloc[i].HomeTeam].append(HomeTeamScored)
             teams[self.__data.iloc[i].AwayTeam].append(AwayTeamScored)
+        for i in teams:
+            while(len(teams[i])<self.__round_number):
+                teams[i].append(0)
 
         # Create a dataframe for goals scored where rows are teams and cols are matchweek.
         GoalsScored = pd.DataFrame(data=teams, index=[i for i in range(0, self.__round_number)]).T
@@ -77,6 +81,10 @@ class GoalCalculator:
             HomeTeamConceded = self.__data.iloc[i]['FTAG']
             teams[self.__data.iloc[i].HomeTeam].append(HomeTeamConceded)
             teams[self.__data.iloc[i].AwayTeam].append(AwayTeamConceded)
+        for i in teams:
+            while(len(teams[i])<self.__round_number):
+                teams[i].append(0)
+
 
         GoalsConceded = pd.DataFrame(data=teams, index=[i for i in range(0, self.__round_number)]).T
         last_match_goals = GoalsConceded[1].copy()
@@ -86,7 +94,6 @@ class GoalCalculator:
             next_match_goals = GoalsConceded[i].copy()
             GoalsConceded[i] = last_match_goals + GoalsConceded[i - 1]
             last_match_goals = next_match_goals.copy()
-        return GoalsConceded
         return GoalsConceded
 
     def __addGoalDiff(self):
